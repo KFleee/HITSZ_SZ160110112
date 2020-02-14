@@ -23,7 +23,7 @@ if __name__ == '__main__':
     optimizer.setup(recommended)
     optimizer.add_hook(chainer.optimizer.GradientClipping(5))
     train_iter = iterators.SerialIterator(train_dataset, batch_size=train_batch_size)
-    test_iter = iterators.SerialIterator(test_dataset, batch_size=test_batch_size, shuffle=False, repeat=False)
+    test_iter = iterators.SerialIterator(test_dataset, batch_size=len(test_dataset), shuffle=False, repeat=False)
     updater = training.StandardUpdater(train_iter, optimizer, converter=converter, device=device)
     trainer = training.Trainer(updater)
     trainer.out = './'

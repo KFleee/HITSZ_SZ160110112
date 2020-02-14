@@ -1,6 +1,5 @@
 import numpy as np
 import chainer
-# from chainer import cuda
 
 
 class Recommended(chainer.Chain):
@@ -30,17 +29,15 @@ class Recommended(chainer.Chain):
         return sum_loss
 
     def test(self, batch):
-        # with cuda.Device(self._device_id):
-            input = []
-            for i in range(len(batch)):
-                input.append(batch[i][0])
-            probability = self.model.predict(input)[0].data
-            # if not self._cpu:
-            #     probability = cuda.to_cpu(probability)
-            indices = np.argsort([-p for p in probability]).astype(dtype=np.int32)
-            results = [result[:self.topK] for result in indices]
-            return results
+        input = []
+        for i in range(len(batch)):
+            input.append(batch[i][0])
+        probability = self.model.predict(input)[0].data
+        # if not self._cpu:
+        #     probability = cuda.to_cpu(probability)
+        indices = np.argsort([-p for p in probability]).astype(dtype=np.int32)
+        results = [result[:self.topK] for result in indices]
+        return results
 
     def __call__(self, batch):
-        # with cuda.Device(self._device_id):
-            return self.train(batch)
+        return self.train(batch)
