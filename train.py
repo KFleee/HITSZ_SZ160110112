@@ -26,6 +26,13 @@ if __name__ == '__main__':
     test_iter = iterators.SerialIterator(test_dataset, batch_size=len(test_dataset), shuffle=False, repeat=False)
     updater = training.StandardUpdater(train_iter, optimizer, converter=converter, device=device)
     trainer = training.Trainer(updater)
+
+
+    def change_alpha(trainer):
+        # if updater.epoch>10:
+        optimizer.alpha = optimizer.alpha * 0.5
+        print('change step size to ', optimizer.alpha)
+        return
     trainer.out = './'
     trainer.extend(training.extensions.LogReport(trigger=(100, 'iteration')))
     trainer.extend(training.extensions.PrintReport(
@@ -55,6 +62,8 @@ if __name__ == '__main__':
                    trigger=(1, 'epoch'))
     trainer.extend(training.extensions.snapshot_object(optimizer, model_name + '.optimizer.{.updater.iteration}.npz'),
                    trigger=(1, 'epoch'))
+    trainer.extend(training.extensions.snapshot_object(trainer, 'train_protect' + '{.updater.iteration}.npz'),
+                   trigger=(100, 'iteration'), priority=10)
     trainer.extend(lambda trainer: change_alpha(trainer, optimizer), trigger=(3, 'epoch'))
     print('start running......')
     trainer.run()

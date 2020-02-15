@@ -88,12 +88,5 @@ def recall(eval_results, top=5):
     return recall
 
 
-def change_alpha(trainer, optimizer):
-    # if updater.epoch>10:
-    optimizer.alpha = optimizer.alpha * 0.5
-    print('change step size to ', optimizer.alpha)
-    return
-
-
 def converter(batch, device):
     return batch
