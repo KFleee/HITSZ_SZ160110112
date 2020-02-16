@@ -8,7 +8,7 @@ class CreateGraph:
         self.item2id = item2id
         self.file_path = file_path
 
-    def load(self):
+    def create(self):
         with codecs.open(self.file_path, encoding='utf-8') as f:
             for record in f:
                 lines = record.strip('\n').strip('\r').split(',')
