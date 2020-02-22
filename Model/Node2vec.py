@@ -22,7 +22,8 @@ class Embedding:
 
 if __name__ == '__main__':
     item2id, id2item = load_item('../Data/LASTFM/items.artist.txt')
-    graph = CreateGraph('../Data/LASTFM/lastfm_train.artist.txt', item2id).create()
+    graph = CreateGraph('../Data/LASTFM/train.artist.txt', item2id).create()
+    print('start train item embedding')
     model = Embedding().train(graph)
 
 
