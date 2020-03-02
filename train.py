@@ -1,9 +1,10 @@
 from Base.Session_Handle import *
-from chainer import optimizers, training, iterators
+from chainer import optimizers, training, iterators, serializers
 import random
 from Model.RepeatNet import *
 from Model.Recommended import *
 from Base.Utils import *
+import os
 
 
 if __name__ == '__main__':
@@ -12,11 +13,11 @@ if __name__ == '__main__':
     model_name = 'RepeatNet'
     random.seed(seed)
     np.random.seed(seed)
-    item2id, id2item = load_item('/kaggle/input/RepeatNet/Data/LASTFM/items.artist.txt')
+    item2id, id2item = load_item('Data/LASTFM/items.artist.txt')
     train_batch_size = 64
-    test_batch_size = 64
-    train_dataset = SessionCorpus(file_path='/kaggle/input/RepeatNet/Data/LASTFM/lastfm_train.artist.txt', item2id=item2id).load()
-    test_dataset = SessionCorpus(file_path='/kaggle/input/RepeatNet/Data/LASTFM/lastfm_test.artist.txt', item2id=item2id).load()
+    test_batch_size = 1024
+    train_dataset = SessionCorpus(file_path='Data/LASTFM/lastfm_train.artist.txt', item2id=item2id).load()
+    test_dataset = SessionCorpus(file_path='Data/LASTFM/lastfm_test.artist.txt', item2id=item2id).load()
     model = RepeatNet(len(item2id), embed_size=100, hidden_size=100, joint_train=False)
     recommended = Recommended(model, 20)
     optimizer = optimizers.Adam(alpha=0.001)
@@ -26,14 +27,18 @@ if __name__ == '__main__':
     test_iter = iterators.SerialIterator(test_dataset, batch_size=len(test_dataset), shuffle=False, repeat=False)
     updater = training.StandardUpdater(train_iter, optimizer, converter=converter, device=device)
     trainer = training.Trainer(updater)
-
+    train_path = 'Result/train_protect148001.npz'
+    if os.path.exists(train_path):
+        print('read trainer')
+        serializers.load_npz(train_path, trainer)
+        print('finish read')
 
     def change_alpha(trainer):
         # if updater.epoch>10:
         optimizer.alpha = optimizer.alpha * 0.5
         print('change step size to ', optimizer.alpha)
         return
-    trainer.out = './'
+    trainer.out = 'Result/'
     trainer.extend(training.extensions.LogReport(trigger=(100, 'iteration')))
     trainer.extend(training.extensions.PrintReport(
         ['epoch', 'iteration', 'main/loss', 'main/loss0', 'main/loss1', 'main/loss2',
@@ -63,8 +68,8 @@ if __name__ == '__main__':
     trainer.extend(training.extensions.snapshot_object(optimizer, model_name + '.optimizer.{.updater.iteration}.npz'),
                    trigger=(1, 'epoch'))
     trainer.extend(training.extensions.snapshot_object(trainer, 'train_protect' + '{.updater.iteration}.npz'),
-                   trigger=(100, 'iteration'), priority=10)
-    trainer.extend(lambda trainer: change_alpha(trainer, optimizer), trigger=(3, 'epoch'))
+                   trigger=(5000, 'iteration'), priority=10)
+    trainer.extend(lambda trainer: change_alpha(trainer), trigger=(3, 'epoch'))
     print('start running......')
     trainer.run()
     print('finish running......')

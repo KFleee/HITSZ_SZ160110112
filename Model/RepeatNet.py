@@ -11,7 +11,7 @@ class RepeatNet(chainer.Chain):
             dec=AttReDecoder(item_size, hidden_size),
         )
 
-    def predict(self,input_list):
+    def predict(self, input_list):
         x_enable = chainer.Variable(self.xp.array(mask(input_list)))
         batch_last_h, batch_seq_h = self.enc(input_list, x_enable)
         p_r, p_e, p = self.dec(batch_last_h, input_list, batch_seq_h, x_enable)

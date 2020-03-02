@@ -40,6 +40,7 @@ def evaluate(test_dataset, batch_size, model, prefix='test'):
         recall15 += recall(eval_results, 15)
         mrr20 += mrr(eval_results, 20)
         recall20 += recall(eval_results, 20)
+        print(pointer, end)
         pointer += batch_size
 
     mrr5 = mrr5 / len(test_dataset)
