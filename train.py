@@ -25,13 +25,13 @@ if __name__ == '__main__':
     optimizer.add_hook(chainer.optimizer.GradientClipping(5))
     train_iter = iterators.SerialIterator(train_dataset, batch_size=train_batch_size)
     test_iter = iterators.SerialIterator(test_dataset, batch_size=len(test_dataset), shuffle=False, repeat=False)
-    updater = training.StandardUpdater(train_iter, optimizer, converter=converter, device=device)
+    updater = training.StandardUpdater(train_iter, optimizer, converter=converter, device=None)
     trainer = training.Trainer(updater)
-    train_path = 'Result/train_protect148001.npz'
-    if os.path.exists(train_path):
-        print('read trainer')
-        serializers.load_npz(train_path, trainer)
-        print('finish read')
+    # train_path = 'Result/train_protect148001.npz'
+    # if os.path.exists(train_path):
+    #     print('read trainer')
+    #     serializers.load_npz(train_path, trainer)
+    #     print('finish read')
 
     def change_alpha(trainer):
         # if updater.epoch>10:
@@ -62,13 +62,13 @@ if __name__ == '__main__':
         trigger=(100, 'iteration'))
     trainer.extend(training.extensions.Evaluator(test_iter, recommended, eval_func=lambda batch: evaluate(test_dataset,
                                                     test_batch_size, recommended, prefix='test'), converter=converter,
-                                                    device=device), trigger=(300, 'iteration'))
+                                                    device=None), trigger=(300, 'iteration'))
     trainer.extend(training.extensions.snapshot_object(recommended, model_name + '.model.{.updater.iteration}.npz'),
                    trigger=(1, 'epoch'))
     trainer.extend(training.extensions.snapshot_object(optimizer, model_name + '.optimizer.{.updater.iteration}.npz'),
                    trigger=(1, 'epoch'))
     trainer.extend(training.extensions.snapshot_object(trainer, 'train_protect' + '{.updater.iteration}.npz'),
-                   trigger=(5000, 'iteration'), priority=10)
+                   trigger=(5000, 'iteration'))
     trainer.extend(lambda trainer: change_alpha(trainer), trigger=(3, 'epoch'))
     print('start running......')
     trainer.run()

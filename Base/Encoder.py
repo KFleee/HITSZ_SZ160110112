@@ -1,7 +1,8 @@
 import chainer
 import chainer.functions as F
 import chainer.links as L
-# from Base.n_step_gru import *
+from Base.Embedding import *
+from chainer import cuda
 
 
 class NStepGRUEncoder(chainer.Chain):
@@ -17,7 +18,8 @@ class NStepGRUEncoder(chainer.Chain):
         batch_size = len(input_list)
         exs = []
         for i in range(batch_size):
-            exs.append(self.xe(self.xp.array(input_list[i], dtype=self.xp.int32)))
+            # exs.append(self.xe(self.xp.array(input_list[i], dtype=self.xp.int32)))
+            exs.append(cuda.to_gpu(Embeddings().item2vec(input_list[i])))
         state_next, batch_h_list = self.gru(None, exs)
         #gru的最后一个输出ht
         batch_last_h = F.vstack([h[-1, :self.hidden_size] for h in batch_h_list])
