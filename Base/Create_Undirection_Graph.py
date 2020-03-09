@@ -18,16 +18,16 @@ def load_item(file_path):
 
 
 if __name__ == '__main__':
-    item2id, id2item = load_item('../Data/LASTFM/items.artist.txt')
-    file_path = '../Data/LASTFM/all.artist.txt'
+    item2id, id2item = load_item('../Data/Yoochoose/items.artist.txt')
+    file_path = '../Data/Yoochoose/all.artist.txt'
     graph = nx.Graph()
     print('start.....')
     with codecs.open(file_path, encoding='utf-8') as f:
         for record in f:
             lines = record.strip('\n').strip('\r').split(', ')
             for i in range(len(lines) - 1):
-                aNode = item2id[str(lines[i])]
-                bNode = item2id[str(lines[i + 1])]
+                aNode = str(item2id[lines[i]])
+                bNode = str(item2id[lines[i + 1]])
                 if (aNode, bNode) in graph.edges:
                     continue
                 else:
