@@ -36,6 +36,10 @@ for key in list(sess_clicks.keys()):
         else:
             item_count[item] = 1
 
+with codecs.open('Yoochoose/item.artist.txt', encoding='utf-8', mode='w') as f:
+    for key in list(item_count.keys()):
+        if item_count[key] >= 5:
+            f.write(str(key) + os.linesep)
 # filter out items that appear less than 5 times
 sess_file = codecs.open('Yoochoose/all.artist.txt', encoding='utf-8', mode='w')
 for key in list(sess_clicks.keys()):
