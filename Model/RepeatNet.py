@@ -4,7 +4,7 @@ from Base.Utils import *
 
 
 class RepeatNet(chainer.Chain):
-    def __init__(self, item_size, embed_size, hidden_size, joint_train=False):
+    def __init__(self, item_size, embed_size, hidden_size):
         self.joint_train = joint_train
         super(RepeatNet, self).__init__(
             enc=NStepGRUEncoder(item_size, embed_size, hidden_size),
@@ -22,20 +22,7 @@ class RepeatNet(chainer.Chain):
         predicts, p = self.predict(input_list)
 
         slices = self.xp.zeros(predicts.shape, dtype=self.xp.int32) > 0
-        if self.joint_train:
-            p_slices = self.xp.zeros(p.shape, dtype=self.xp.int32) > 0
         for i, v in enumerate(output_list):
             slices[i, v] = True
-            if self.joint_train:
-                if v in input_list[i]:
-                    p_slices[i, 1] = True
-                else:
-                    p_slices[i, 0] = True
-
         loss = -F.sum(F.log(F.get_item(predicts, slices)))/len(input_list)
-        if self.joint_train:
-            p_loss = -F.sum(F.log(F.get_item(p, p_slices)))/len(input_list)
-        if self.joint_train:
-            return loss, p_loss
-        else:
-            return loss
+        return loss

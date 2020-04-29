@@ -59,7 +59,7 @@ def evaluate(test_dataset, batch_size, model, prefix='test'):
     reporter.report({prefix + '/recall15': recall15}, model)
 
     mrr20 = mrr20 / len(test_dataset)
-    recall20 = recall20 / len(test_dataset)
+    recall20 = recall20 / len(test_dataset)/Users/lijiahui/study/毕业论文/LASTFM_NOEMBEDDING/log
     reporter.report({prefix + '/mrr20': mrr20}, model)
     reporter.report({prefix + '/recall20': recall20}, model)
     return mrr5, recall5, mrr10, recall10, mrr15, recall15, mrr20, recall20

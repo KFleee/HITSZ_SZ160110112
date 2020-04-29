@@ -29,7 +29,7 @@ class AttReDecoder(chainer.Chain):
 
         h = self.e_att(batch_x_seq_h, x_last_h, x_enable)
         p_i_e = self.fy(F.concat([h, x_last_h], axis=1))
-        p_i_e = expore(p_i_e, input_list)
+        p_i_e = explore(p_i_e, input_list)
         p_i_e = F.softmax(p_i_e, axis=1)
 
         p_i_r = self.r_att.att_weights(batch_x_seq_h, x_last_h, x_enable)

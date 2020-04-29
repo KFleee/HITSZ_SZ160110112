@@ -67,5 +67,5 @@ class Explore(function.Function):
         return gw,
 
 
-def expore(input, index):
+def explore(input, index):
     return Explore(index)(input)
