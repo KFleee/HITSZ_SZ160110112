@@ -69,6 +69,7 @@ if __name__ == '__main__':
                    trigger=(1, 'epoch'))
     trainer.extend(training.extensions.snapshot_object(trainer, 'train_protect' + '{.updater.iteration}.npz'),
                    trigger=(5000, 'iteration'))
+    trainer.extend(training.extensions.PlotReport(['main/loss'], trigger=(1, 'epoch')))
     trainer.extend(lambda trainer: change_alpha(trainer), trigger=(3, 'epoch'))
     print('start running......')
     trainer.run()
