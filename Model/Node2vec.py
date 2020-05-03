@@ -49,7 +49,7 @@ class Embedding:
                 f.write(','.join(line) + os.linesep)
                 f.flush()
 
-    def train(self, graph, dimensions=64, walk_length=30, num_walks=200, workers=1,
+    def train(self, graph, dimensions=64, walk_length=30, num_walks=200, workers=4,
               window=10, min_count=1, batch_words=4):
         if os.path.exists('../Result/EMBEDDING_MODEL'):
             model = KeyedVectors.load_word2vec_format('../Result/EMBEDDING_MODEL')
